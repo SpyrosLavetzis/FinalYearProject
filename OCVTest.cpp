@@ -47,7 +47,7 @@ int main() {
 		if (waitKey(1) == 27) { //update every 1 ms and break if esc key is pressed
 			break;
 		}
-	}  
+	}      
 	cap.release();
 
 
