@@ -13,9 +13,9 @@ int main() {
 	
 
 	//VideoCapture cap("C:\\Users\\spyro\\Desktop\\Ant.mp4"); // open video file
-	VideoCapture cap("C:\\Users\\spyro\\Desktop\\test.mp4"); 
+	//VideoCapture cap("C:\\Users\\spyro\\Desktop\\test.mp4"); 
 	//static const string windowName = "Test Video";
-	//VideoCapture cap(0);
+	VideoCapture cap(0);
 	Mat frame; //create frame object
 	Ptr<Tracker> tracker;
 	tracker = TrackerMOSSE::create(); //create algorith specific tracker
