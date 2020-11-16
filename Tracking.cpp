@@ -3,10 +3,11 @@ using namespace std;
 
 Tracking::Tracking() {
 	//VideoCapture cap("C:\\Users\\spyro\\Desktop\\Ant.mp4"); // open video file
-		//VideoCapture cap("C:\\Users\\spyro\\Desktop\\test.mp4"); 
+	//cap.open("C:\\Users\\spyro\\Desktop\\test.mp4"); 
 		//static const string windowName = "Test Video";
 	cap.open(0);
-	tracker = TrackerMOSSE::create(); //create algorithm specific tracker
+	//tracker = TrackerGOTURN::create(); //create algorithm specific tracker
+	tracker = TrackerMOSSE::create();
 	cap.read(frame);
 	trackBox = selectROI(frame, false, false);
 	tracker->init(frame, trackBox);	//initialise tracker
