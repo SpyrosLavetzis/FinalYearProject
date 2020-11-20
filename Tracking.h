@@ -7,6 +7,8 @@
 #include <opencv2\core.hpp>
 #include <opencv2\tracking.hpp>
 
+
+
 using namespace cv;
 
 class Tracking {
@@ -16,7 +18,11 @@ private:
 	Rect2d trackBox;
 	Point point;
 	VideoCapture cap;
+	Size S;
+	int ex;
+	VideoWriter video;
 public:
 	Tracking();
 	void TrackingRun();
+	void SaveVideo();
 };
