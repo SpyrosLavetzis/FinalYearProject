@@ -1,4 +1,4 @@
-#include<iostream>
+/*#include<iostream>
 #include<string>
 #include<stdlib.h>
 using namespace std;
@@ -34,4 +34,4 @@ int main() {
 		delete[] charArray;
 	}
 	return 0;
-}
+}*/
