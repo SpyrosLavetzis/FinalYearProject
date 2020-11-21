@@ -14,6 +14,5 @@ int main() {
 	
 	Tracking track;
 	track.TrackingRun();
-
 	return 0;
 }
