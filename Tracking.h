@@ -14,8 +14,11 @@ using namespace cv;
 class Tracking {
 private:
 	Mat frame; //create frame object
+	Mat imposter;
+	Mat template_img;
 	Ptr<Tracker> tracker;
 	Rect2d trackBox;
+	Rect box;
 	Point point;
 	VideoCapture cap;
 	Size S;
