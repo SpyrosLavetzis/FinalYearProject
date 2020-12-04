@@ -13,6 +13,7 @@ Tracking::Tracking() {
 	resizeWindow("Test", 1000, 700);
 	//trackBox = selectROI("Test", frame, false, false);
 	//tracker->init(frame, trackBox);	//initialise tracker
+	template_img = Mat();
 }
 
 void Tracking::SaveVideo() {
@@ -37,11 +38,23 @@ void Tracking::TrackingRun() {
 			tracker = TrackerMOSSE::create();
 			trackBox = selectROI("Test", frame, false, false);
 			tracker->init(frame, trackBox);	//initialise tracker
+			//Mat(template_img, trackBox);
+			//const Rect box = Rect(trackBox);
+			//Rect* const box_ptr = &box;
+			//Mat* const template_prt = &template_img;
+			//Mat(template_img, box);
+			Rect box(trackBox.x, trackBox.y, trackBox.width, trackBox.height);
+			frame(box).copyTo(template_img);
+			//template_img.resize(trackBox.size());
+			imshow("Template", template_img);
+			//imposter = template_img.clone();
 		}
 		
 
 		if (tracker->update(frame, trackBox)) {//update tracking to next frame
 			rectangle(frame, trackBox, Scalar(255, 0, 0), 2, 8); //draw rectangle around object
+			
+			
 		}
 		/*else { //if algo fails redraw
 			cout << "here" << endl; 
@@ -57,6 +70,7 @@ void Tracking::TrackingRun() {
 		cout << point << << endl;*/
 		//video.write(frame);
 		imshow("Test", frame); //show frame with box
+		//imshow("Template", template_img);
 	
 		if (waitKey(1) == 27) { //update every 1 ms and break if esc key is pressed
 			break;
