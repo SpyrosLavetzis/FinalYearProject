@@ -20,6 +20,7 @@ private:
 	Ptr<Tracker> tracker;
 	Rect2d track_box;
 	Rect box;
+	
 	Point point;
 	VideoCapture cap;
 	Size S;
