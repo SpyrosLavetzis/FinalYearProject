@@ -9,12 +9,16 @@ using namespace cv;
 int main() {
 	Mat img1;
 	Mat img2;
-	img1 = imread("C:\\Users\\spyro\\Desktop\\CropAnt.jpeg", IMREAD_GRAYSCALE);
-	img2 = imread("C:\\Users\\spyro\\Desktop\\Frame.jpeg", IMREAD_GRAYSCALE);
-	/*Rect2d box;
+	//Mat img;
+	//img1 = imread("C:\\Users\\spyro\\Desktop\\CropAnt.jpeg", IMREAD_GRAYSCALE);
+	img2 = imread("C:\\Users\\spyro\\Desktop\\FrameSmall.jpeg", IMREAD_GRAYSCALE);
+	Rect2d box;
+	//Rect2d box1;
 	box = selectROI(img2, false, false);
 	img1 = img2(box);
-	while (waitKey(1) < 1) {
+	//box1 = selectROI(img2, false, false);
+	//img1 = img2(box2);
+	/*while (waitKey(1) < 1) {
 		imshow("img", img1);
 	}*/
 	
@@ -36,8 +40,10 @@ int main() {
 	/*for (int i = 0; i < 5; i++) {
 		init_matches.at(i) = matches.at(i);
 	}*/
+	//sort(matches.begin(), matches.end());
 	Mat img3;
-	cout << "Size:"<<matches.size() << endl;
+	matches.resize(5);
+	//cout << "Size:"<<matches.size() << endl;
 	drawMatches(img1, img1_keypoints, img2, img2_keypoints, matches, img3);
 	while (waitKey(1) < 1) {
 		imshow("image", img3);
