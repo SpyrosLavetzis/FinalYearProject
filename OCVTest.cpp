@@ -11,11 +11,10 @@ using namespace cv;
 using namespace std;
 
 int main() {
-	
 	Tracking track;
 	//track.SaveVideo();
 	track.TrackingRun();
-	
+   
 	return 0;
 }
 
