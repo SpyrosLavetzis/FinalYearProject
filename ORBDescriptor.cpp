@@ -6,22 +6,14 @@
 using namespace std;
 using namespace cv;
 
-int main() {
-	Mat img1;
-	Mat img2;
-	//Mat img;
-	//img1 = imread("C:\\Users\\spyro\\Desktop\\CropAnt.jpeg", IMREAD_GRAYSCALE);
+void featureMatching(Mat img1, Mat img2) {
+	//Mat img1;
+	//Mat img2;
+	//this should change to use the frame and roi from MOSSE
 	img2 = imread("C:\\Users\\spyro\\Desktop\\FrameSmall.jpeg", IMREAD_GRAYSCALE);
 	Rect2d box;
-	//Rect2d box1;
 	box = selectROI(img2, false, false);
 	img1 = img2(box);
-	//box1 = selectROI(img2, false, false);
-	//img1 = img2(box2);
-	/*while (waitKey(1) < 1) {
-		imshow("img", img1);
-	}*/
-	
 	
 	Ptr<ORB> orb;
 	orb = ORB::create();
@@ -35,20 +27,13 @@ int main() {
 	bf = BFMatcher::create(NORM_HAMMING, true);
 	vector<DMatch> matches;
 	bf->match(img1_descriptor, img2_descriptor, matches);
-	//vector<DMatch> init_matches;
-	//init_matches.insert(matches.begin(), matches.begin() + 10);
-	/*for (int i = 0; i < 5; i++) {
-		init_matches.at(i) = matches.at(i);
-	}*/
-	//sort(matches.begin(), matches.end());
+
+	sort(matches.begin(), matches.end());
+    matches.resize(1);
+
 	Mat img3;
-	matches.resize(5);
-	//cout << "Size:"<<matches.size() << endl;
 	drawMatches(img1, img1_keypoints, img2, img2_keypoints, matches, img3);
 	while (waitKey(1) < 1) {
 		imshow("image", img3);
 	}
-	
-
-	return 0;
 }
