@@ -8,9 +8,9 @@ Tracking::Tracking() {
 		//static const string windowName = "Test Video";
 	//cap.open(0);
 	//tracker = TrackerGOTURN::create(); //create algorithm specific tracker
+	//tracker = TrackerCSRT::create();
 	tracker = TrackerMOSSE::create();
 	cap.read(frame);
-	//tracker = TrackerMOSSE::create();
 	namedWindow("Test", WINDOW_NORMAL);
 	resizeWindow("Test", 1000, 700);
 	track_box = selectROI("Test", frame, false, false);
@@ -62,7 +62,7 @@ void Tracking::TrackingRun() {
 			//imshow("Template", template_img);
 			//imposter = template_img.clone();
 		}*/
-		if (frame_tracker == 10) {
+		/*if (frame_tracker == 10) {
 			frame_tracker = 0;
 			Rect box((track_box.x - 100), (track_box.y - 100), (track_box.width + 200), (track_box.height + 200));
 			frame(box).copyTo(img);
@@ -100,7 +100,7 @@ void Tracking::TrackingRun() {
 			/*track_box = template_box;
 			tracker = TrackerMOSSE::create();
 			tracker->init(frame, track_box);*/
-		}
+		//}*/
 
 		if (tracker->update(frame, track_box)) {//update tracking to next frame
 			rectangle(frame, track_box, Scalar(255, 0, 0), 2, 8); //draw rectangle around object
