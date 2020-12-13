@@ -15,8 +15,9 @@ class Tracking {
 private:
 	Mat frame; //create frame object
 	Mat imposter;
-	Mat template_img;
-	Mat img;
+	Mat img1;
+	Mat img2;
+	Mat grayscale;
 	Ptr<Tracker> tracker;
 	Rect2d track_box;
 	Rect box;
@@ -27,6 +28,7 @@ private:
 	int ex;
 	VideoWriter video;
 	int frame_tracker;
+	void MOSSEtoORB(Mat& img1, Mat& img2);
 public:
 	Tracking();
 	void TrackingRun();
