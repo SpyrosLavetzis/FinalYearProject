@@ -7,13 +7,13 @@ using namespace std;
 using namespace cv;
 
 void featureMatching(Mat img1, Mat img2) {
-	//Mat img1;
-	//Mat img2;
+	/*Mat img1;
+	Mat img2;*/
 	//this should change to use the frame and roi from MOSSE
-	img2 = imread("C:\\Users\\spyro\\Desktop\\FrameSmall.jpeg", IMREAD_GRAYSCALE);
+	/*img2 = imread("C:\\Users\\spyro\\Desktop\\FrameSmall.jpeg", IMREAD_GRAYSCALE);
 	Rect2d box;
 	box = selectROI(img2, false, false);
-	img1 = img2(box);
+	img1 = img2(box);*/
 	
 	Ptr<ORB> orb;
 	orb = ORB::create();
@@ -29,11 +29,11 @@ void featureMatching(Mat img1, Mat img2) {
 	bf->match(img1_descriptor, img2_descriptor, matches);
 
 	sort(matches.begin(), matches.end());
-    matches.resize(1);
+    matches.resize(2);
 
 	Mat img3;
 	drawMatches(img1, img1_keypoints, img2, img2_keypoints, matches, img3);
-	while (waitKey(1) < 1) {
+	//while (waitKey(1) < 1) {
 		imshow("image", img3);
-	}
+	//}
 }
