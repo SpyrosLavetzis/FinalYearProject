@@ -2,29 +2,31 @@
 using namespace std;
 #include <string>
 //VideoCapture cap("C:\\Users\\spyro\\Desktop\\RealAnt1.MOV");
-void featureMatching(Mat img1, Mat img2);
+void featureMatching(Mat img1, Mat img2, Mat mask);
 Tracking::Tracking() {
 	cap.open("C:\\Users\\spyro\\Desktop\\Ants\\RealAnt1.MOV"); // open video file
 	//cap.open("C:\\Users\\spyro\\Desktop\\test.mp4"); 
 		//static const string windowName = "Test Video";
 	//cap.open(0);
 	//tracker = TrackerGOTURN::create(); //create algorithm specific tracker
-	//tracker = TrackerCSRT::create();
-	tracker = TrackerMOSSE::create();
+	tracker = TrackerCSRT::create();
+	//tracker = TrackerMOSSE::create();
 	cap.read(frame);
 	namedWindow("Test", WINDOW_NORMAL);
 	resizeWindow("Test", 1000, 700);
 	track_box = selectROI("Test", frame, false, false);
 	tracker->init(frame, track_box);
 	
-	Rect box1((track_box.x - 15), (track_box.y - 15), (track_box.width + 30), (track_box.height + 30));
-	cvtColor(frame, grayscale, COLOR_BGR2GRAY);
-	grayscale(box1).copyTo(img1);
+	//here
+
+	//img2 = imread("C:\\Users\\spyro\\Desktop\\FakeAntScaled.jpeg", IMREAD_GRAYSCALE);
+
 	//frame(box).copyTo(img);
 	//imshow("sure", img);
 	//frame.copyTo(img);
 	
-	
+	//here2
+
 	//trackBox = selectROI("Test", frame, false, false);
 	//tracker->init(frame, trackBox);	//initialise tracker
 	//template_img = Mat();
@@ -48,10 +50,7 @@ void Tracking::TrackingRun() {
 			break;
 		}
 		frame_tracker++;
-		Rect box2((track_box.x - 80), (track_box.y - 80), (track_box.width + 160), (track_box.height + 160));
-		cvtColor(frame, grayscale, COLOR_BGR2GRAY);
-		grayscale(box2).copyTo(img2);
-		featureMatching(img1, img2);
+		
 		/*char c = 'i';
 		if ((waitKey(1) & 0xff) == int(c)) { //if i is pressed select ROI
 			tracker = TrackerMOSSE::create();
@@ -107,32 +106,48 @@ void Tracking::TrackingRun() {
 			tracker = TrackerMOSSE::create();
 			tracker->init(frame, track_box);*/
 		//}*/
+		if (frame_tracker == 2) {
+			frame_tracker = 0;
+			if (tracker->update(frame, track_box)) {//update tracking to next frame
+				rectangle(frame, track_box, Scalar(255, 0, 0), 2, 8); //draw rectangle around object
+			}
 
-		if (tracker->update(frame, track_box)) {//update tracking to next frame
-			rectangle(frame, track_box, Scalar(255, 0, 0), 2, 8); //draw rectangle around object
-		}
-		
-		/*else { //if algo fails redraw
-			cout << "here" << endl; 
-			tracker->clear();
-			tracker = TrackerMOSSE::create();
-			//trackBox = selectROI("Test", frame, false, false);
-			tracker->init(frame, trackBox);
-		}*/
+			/*else { //if algo fails redraw
+				cout << "here" << endl;
+				tracker->clear();
+				tracker = TrackerMOSSE::create();
+				//trackBox = selectROI("Test", frame, false, false);
+				tracker->init(frame, trackBox);
+			}*/
 
-		/*Point point = trackBox.tl(); //bottom right corner of ROI
-		
-		//no matter the ration, br end of frame at 630-640 for pc cam
-		cout << point << endl;*/
-		
-		//video.write(frame);
-		imshow("Test", frame); //show frame with box
-		//imshow("Template", template_img);
-		if (waitKey(50) == 27) { //update every 1 ms and break if esc key is pressed
-			break;
+			/*Point point = trackBox.tl(); //bottom right corner of ROI
+
+			//no matter the ration, br end of frame at 630-640 for pc cam
+			cout << point << endl;*/
+
+			//video.write(frame);
+			imshow("Test", frame); //show frame with box
+			//imshow("Template", template_img);
+			if (waitKey(1) == 27) { //update every 1 ms and break if esc key is pressed
+				break;
+			}
 		}
-		
 	}
 	cap.release();
 }
 
+void Tracking::MOSSEtoORB(Mat& img1, Mat& img2, Mat frame) {
+	//here
+	Rect box1((track_box.x - 15), (track_box.y - 15), (track_box.width + 30), (track_box.height + 30));
+	cvtColor(frame, grayscale, COLOR_BGR2GRAY);
+	grayscale(box1).copyTo(img1);
+	grayscale(track_box).copyTo(mask);
+
+	//here2
+	Rect box2((track_box.x - 200), (track_box.y - 200), (track_box.width + 400), (track_box.height + 400));
+	cvtColor(frame, grayscale, COLOR_BGR2GRAY);
+	grayscale(box2).copyTo(img2);
+	/*cvtColor(frame, img2, COLOR_BGR2GRAY);*/
+	featureMatching(img1, img2, mask);
+
+}
