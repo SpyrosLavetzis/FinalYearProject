@@ -18,6 +18,7 @@ private:
 	Mat img1;
 	Mat img2;
 	Mat grayscale;
+	Mat mask;
 	Ptr<Tracker> tracker;
 	Rect2d track_box;
 	Rect box;
@@ -28,7 +29,7 @@ private:
 	int ex;
 	VideoWriter video;
 	int frame_tracker;
-	void MOSSEtoORB(Mat& img1, Mat& img2);
+	void MOSSEtoORB(Mat& img1, Mat& img2, Mat frame);
 public:
 	Tracking();
 	void TrackingRun();
