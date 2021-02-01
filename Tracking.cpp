@@ -4,13 +4,14 @@ using namespace std;
 //VideoCapture cap("C:\\Users\\spyro\\Desktop\\RealAnt1.MOV");
 void featureMatching(Mat img1, Mat img2, Mat mask);
 Tracking::Tracking() {
-	cap.open("C:\\Users\\spyro\\Desktop\\Ants\\RealAnt1.MOV"); // open video file
+	cap.open("C:\\Users\\spyro\\Desktop\\Ants\\ZoomedSlow.mp4"); // open video file
 	//cap.open("C:\\Users\\spyro\\Desktop\\test.mp4"); 
 		//static const string windowName = "Test Video";
 	//cap.open(0);
 	//tracker = TrackerGOTURN::create(); //create algorithm specific tracker
-	tracker = TrackerCSRT::create();
-	//tracker = TrackerMOSSE::create();
+	//tracker = TrackerCSRT::create();
+	tracker = TrackerMOSSE::create();
+	//tracker = TrackerKCF::create();
 	cap.read(frame);
 	namedWindow("Test", WINDOW_NORMAL);
 	resizeWindow("Test", 1000, 700);
@@ -18,6 +19,7 @@ Tracking::Tracking() {
 	tracker->init(frame, track_box);
 	
 	//here
+	
 
 	//img2 = imread("C:\\Users\\spyro\\Desktop\\FakeAntScaled.jpeg", IMREAD_GRAYSCALE);
 
@@ -25,7 +27,6 @@ Tracking::Tracking() {
 	//imshow("sure", img);
 	//frame.copyTo(img);
 	
-	//here2
 
 	//trackBox = selectROI("Test", frame, false, false);
 	//tracker->init(frame, trackBox);	//initialise tracker
@@ -47,9 +48,12 @@ void Tracking::TrackingRun() {
 
 		cap.read(frame);
 		if (frame.empty()) { //ensure we aren't stuck in the for loop foreve (after video is done)
+			cout << "Break" << endl;
 			break;
 		}
 		frame_tracker++;
+		timer = (double)getTickCount();
+		//here2
 		
 		/*char c = 'i';
 		if ((waitKey(1) & 0xff) == int(c)) { //if i is pressed select ROI
@@ -106,12 +110,13 @@ void Tracking::TrackingRun() {
 			tracker = TrackerMOSSE::create();
 			tracker->init(frame, track_box);*/
 		//}*/
-		if (frame_tracker == 2) {
-			frame_tracker = 0;
-			if (tracker->update(frame, track_box)) {//update tracking to next frame
-				rectangle(frame, track_box, Scalar(255, 0, 0), 2, 8); //draw rectangle around object
-			}
 
+		if (tracker->update(frame, track_box)) {//update tracking to next frame
+			rectangle(frame, track_box, Scalar(255, 0, 0), 2, 8); //draw rectangle around object
+			freq = getTickFrequency() / ((double)getTickCount() - timer);
+		}
+
+		putText(frame, to_string(freq), Point(100, 80), FONT_HERSHEY_PLAIN, 1.5, Scalar(0,0,255), 2);
 			/*else { //if algo fails redraw
 				cout << "here" << endl;
 				tracker->clear();
@@ -126,11 +131,11 @@ void Tracking::TrackingRun() {
 			cout << point << endl;*/
 
 			//video.write(frame);
-			imshow("Test", frame); //show frame with box
+		imshow("Test", frame); //show frame with box
 			//imshow("Template", template_img);
-			if (waitKey(1) == 27) { //update every 1 ms and break if esc key is pressed
-				break;
-			}
+		if (waitKey(1) == 27) { //update every 1 ms and break if esc key is pressed
+			
+			break;
 		}
 	}
 	cap.release();
