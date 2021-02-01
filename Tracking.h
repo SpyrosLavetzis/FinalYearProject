@@ -6,6 +6,7 @@
 #include <opencv2\opencv.hpp>
 #include <opencv2\core.hpp>
 #include <opencv2\tracking.hpp>
+#include <string.h>
 
 
 
@@ -22,11 +23,13 @@ private:
 	Ptr<Tracker> tracker;
 	Rect2d track_box;
 	Rect box;
-	
 	Point point;
 	VideoCapture cap;
 	Size S;
 	int ex;
+	double timer;
+	double freq;
+
 	VideoWriter video;
 	int frame_tracker;
 	void MOSSEtoORB(Mat& img1, Mat& img2, Mat frame);
