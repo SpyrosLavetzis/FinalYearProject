@@ -9,7 +9,9 @@ using namespace std;
 int main()
 {
     
-    VideoCapture capture("C:\\Users\\spyro\\Desktop\\Ants\\ZoomedSlow.mp4");
+    //VideoCapture capture("C:\\Users\\spyro\\Desktop\\Ants\\ZoomedSlow.mp4");
+    VideoCapture capture;
+    capture.open(0);
     if (!capture.isOpened()) {
         //error in opening the video input
         cerr << "Unable to open file!" << endl;
@@ -28,21 +30,29 @@ int main()
     Mat old_frame, old_gray;
     vector<Point2f> p0, p1;
     // Take first frame and find corners in it
-    capture >> old_frame;
+    capture.read(old_frame);
     cvtColor(old_frame, old_gray, COLOR_BGR2GRAY);
    /* Mat ant_part;
     
     goodFeaturesToTrack(old_gray, p0, 100, 0.3, 7, Mat(), 7, false, 0.04);
     cout << p0 << endl;
     cout << box.br() << endl;*/
-    Rect box = selectROI(old_frame, false, false);
-    p0.assign(1, box.br());
+    namedWindow("Test", WINDOW_NORMAL);
+    resizeWindow("Test", 1000, 700);
+    for (int i = 0; i < 1; i++) {
+        Rect box = selectROI("Test", old_frame, false, false);
+        p0.push_back(box.br());
+    }
+    
+
 
     // Create a mask image for drawing purposes
     Mat mask = Mat::zeros(old_frame.size(), old_frame.type());
+    
     while (true) {
+        double timer = (double)getTickCount();
         Mat frame, frame_gray;
-        capture >> frame;
+        capture.read(frame);
         if (frame.empty())
             break;
         cvtColor(frame, frame_gray, COLOR_BGR2GRAY);
@@ -50,8 +60,10 @@ int main()
         vector<uchar> status;
         vector<float> err;
         TermCriteria criteria = TermCriteria((TermCriteria::COUNT) + (TermCriteria::EPS), 10, 0.03);
+        
         calcOpticalFlowPyrLK(old_gray, frame_gray, p0, p1, status, err, Size(15, 15), 2, criteria);
         vector<Point2f> good_new;
+        //cout << status.size() << endl;
         for (uint i = 0; i < p0.size(); i++)
         {
             // Select good points
@@ -64,8 +76,10 @@ int main()
         }
         Mat img;
         add(frame, mask, img);
-        imshow("Frame", img);
-        int keyboard = waitKey(30);
+        double freq = getTickFrequency() / ((double)getTickCount() - timer);
+        putText(img, to_string(freq), Point(100, 80), FONT_HERSHEY_PLAIN, 1.5, Scalar(0, 0, 255), 2);
+        imshow("Test", img);
+        int keyboard = waitKey(1);
         if (keyboard == 'q' || keyboard == 27)
             break;
         // Now update the previous frame and previous points
