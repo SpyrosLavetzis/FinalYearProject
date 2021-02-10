@@ -1,25 +1,16 @@
-#include <iostream>
-#include <opencv2/core.hpp>
-#include <opencv2/highgui.hpp>
-#include <opencv2/imgproc.hpp>
-#include <opencv2/videoio.hpp>
-#include <opencv2/video.hpp>
-using namespace cv;
-using namespace std;
-int main()
-{
-    
+#include "SparseOptFlow.h"
+
+SparseOptFlow::SparseOptFlow() {
     //VideoCapture capture("C:\\Users\\spyro\\Desktop\\Ants\\ZoomedSlow.mp4");
-    VideoCapture capture;
+    
     capture.open(0);
     if (!capture.isOpened()) {
         //error in opening the video input
-        cerr << "Unable to open file!" << endl;
-        return 0;
+        cout << "Unable to open file!" << endl;
+       // break;
     }
-    // Create some random colors
-    vector<Scalar> colors;
-    RNG rng;
+
+    //create random colour using the rgb format
     for (int i = 0; i < 100; i++)
     {
         int r = rng.uniform(0, 256);
@@ -27,42 +18,38 @@ int main()
         int b = rng.uniform(0, 256);
         colors.push_back(Scalar(r, g, b));
     }
-    Mat old_frame, old_gray;
-    vector<Point2f> p0, p1;
-    // Take first frame and find corners in it
+
+    // Take first frame and choose points to track
     capture.read(old_frame);
     cvtColor(old_frame, old_gray, COLOR_BGR2GRAY);
-   /* Mat ant_part;
-    
-    goodFeaturesToTrack(old_gray, p0, 100, 0.3, 7, Mat(), 7, false, 0.04);
-    cout << p0 << endl;
-    cout << box.br() << endl;*/
+    //create window
     namedWindow("Test", WINDOW_NORMAL);
     resizeWindow("Test", 1000, 700);
     for (int i = 0; i < 1; i++) {
         Rect box = selectROI("Test", old_frame, false, false);
         p0.push_back(box.br());
     }
-    
-
-
     // Create a mask image for drawing purposes
-    Mat mask = Mat::zeros(old_frame.size(), old_frame.type());
     
+    mask = Mat::zeros(old_frame.size(), old_frame.type());
+}
+    
+void SparseOptFlow::trackOptFlow() {
     while (true) {
-        double timer = (double)getTickCount();
-        Mat frame, frame_gray;
+        
+        timer = (double)getTickCount();
+        
         capture.read(frame);
         if (frame.empty())
             break;
         cvtColor(frame, frame_gray, COLOR_BGR2GRAY);
         // calculate optical flow
-        vector<uchar> status;
-        vector<float> err;
-        TermCriteria criteria = TermCriteria((TermCriteria::COUNT) + (TermCriteria::EPS), 10, 0.03);
+
         
+        criteria = TermCriteria((TermCriteria::COUNT) + (TermCriteria::EPS), 10, 0.03);
+
         calcOpticalFlowPyrLK(old_gray, frame_gray, p0, p1, status, err, Size(15, 15), 2, criteria);
-        vector<Point2f> good_new;
+        //vector<Point2f> good_new;
         //cout << status.size() << endl;
         for (uint i = 0; i < p0.size(); i++)
         {
@@ -74,16 +61,24 @@ int main()
                 circle(frame, p1[i], 5, colors[i], -1);
             }
         }
-        Mat img;
+        
         add(frame, mask, img);
-        double freq = getTickFrequency() / ((double)getTickCount() - timer);
+        
+        freq = getTickFrequency() / ((double)getTickCount() - timer);
         putText(img, to_string(freq), Point(100, 80), FONT_HERSHEY_PLAIN, 1.5, Scalar(0, 0, 255), 2);
         imshow("Test", img);
-        int keyboard = waitKey(1);
+        
+        keyboard = waitKey(1);
         if (keyboard == 'q' || keyboard == 27)
             break;
         // Now update the previous frame and previous points
         old_gray = frame_gray.clone();
         p0 = good_new;
+        //reset vector as we only want to store current and previous position (not the ones before that)
+        good_new.clear();
     }
 }
+
+
+
+    
