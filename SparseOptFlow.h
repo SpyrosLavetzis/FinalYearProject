@@ -18,7 +18,7 @@ private:
 	RNG rng;
 	Mat old_frame;
 	Mat	old_gray;
-	vector<Point2f> p0, p1;
+	vector<Point2f> p1;
 	Mat mask;
 	double timer;
 	Mat frame;
@@ -30,9 +30,14 @@ private:
 	Mat img;
 	double freq;
 	int keyboard;
+	int frame_counter;
+	//Point point;
 
 public:
+	vector<Point2f> p0;
 	// constructor
 	SparseOptFlow();
 	void trackOptFlow();
+	void playVideo();
+	void updatePoints();
 };
