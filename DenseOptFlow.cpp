@@ -3,15 +3,16 @@
 
 DenseOptFlow::DenseOptFlow()
 {
-    capture.open("C:\\Users\\spyro\\Desktop\\Ants\\ZoomedSlow.mp4");
+    //capture.open("C:\\Users\\spyro\\Desktop\\Ants\\ZoomedSlow.mp4");
     break_flag = 0;
-    //capture.open(0);
+    capture.open(0);
     if (!capture.isOpened()) {
         //error in opening the video input
         cerr << "Unable to open file!" << endl;
         break_flag = 1;
     }
     capture.read(frame);
+    //cout << frame.at<int>(0, 0) << endl;
     box = selectROI("test", frame, false, false);
     frame(box).copyTo(frame1);
     cvtColor(frame1, prvs, COLOR_BGR2GRAY);
@@ -35,8 +36,11 @@ void DenseOptFlow::trackDenseFlow()
         Mat flow(prvs.size(), CV_32FC2);
         calcOpticalFlowFarneback(prvs, next, flow, 0.5, 3, 15, 3, 5, 1.2, 0);
         // visualization
+        
+        cout << flow.at< Point2f>(100, 100) << endl;
         split(flow, flow_parts);
         cartToPolar(flow_parts[0], flow_parts[1], magnitude, angle, true);
+        
         normalize(magnitude, magn_norm, 0.0f, 1.0f, NORM_MINMAX);
         angle *= ((1.f / 360.f) * (180.f / 255.f));
         //build hsv image
@@ -46,6 +50,8 @@ void DenseOptFlow::trackDenseFlow()
         merge(_hsv, 3, hsv);
         hsv.convertTo(hsv8, CV_8U, 255.0);
         cvtColor(hsv8, bgr, COLOR_HSV2BGR);
+        Point2f test_point = (Point2f)bgr.at<uchar>(100, 100);
+        circle(bgr, test_point, 3, CV_RGB(0, 255, 0), -1);
         freq = getTickFrequency() / ((double)getTickCount() - timer);
         putText(bgr, to_string(freq), Point(100, 80), FONT_HERSHEY_PLAIN, 1.5, Scalar(0, 0, 255), 2);
         imshow("frame2", bgr);
@@ -57,6 +63,7 @@ void DenseOptFlow::trackDenseFlow()
     }
 }
 
-void DenseOptFlow::moveROI() {
+//void DenseOptFlow::drawROI() {
 
-}
+
+//}
