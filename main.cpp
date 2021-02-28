@@ -7,25 +7,18 @@
 #include <opencv2\tracking.hpp>
 #include "Tracking.h"
 #include "PCAdetect.h"
+#include "SparseOptFlow.h"
+#include "DenseOptFlow.h"
 
-using namespace cv;
-using namespace std;
 
-/*int main() {
-	/*Tracking track;
-	//track.SaveVideo();
-	track.TrackingRun();*/
-   /* void featureMatching(Mat img1, Mat img2);
-    Mat img1;
-    Mat img2;
-    featureMatching(img1, img2);*/
+int main()
+{
 
-   /* PCAdetect test;
-    test.run();
+    DenseOptFlow track;
+    track.trackDenseFlow();
 
 	return 0;
-}*/
-
+}
 
 
 /*#include <opencv2/opencv.hpp>
