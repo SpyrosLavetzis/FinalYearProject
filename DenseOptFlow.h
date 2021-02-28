@@ -22,10 +22,20 @@ private:
 	Mat magnitude, angle, magn_norm;
 	Mat _hsv[3], hsv, hsv8, bgr;
 	int keyboard;
+	int step;
+	Point update_point;
+	Point2f get_flow;
+	int next_x, next_y;
+	int delta_x, delta_y;
+	Rect2d tracked_rect;
+	int rec_x, rec_y, rec_width, rec_height;
 
 public:
 	DenseOptFlow();
 	void trackDenseFlow();
 	void moveROI();
+	void showHue(Mat flow);
+	void drawAllPoints(Mat flow);
+	void darwRectangle();
 
 };
