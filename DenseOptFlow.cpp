@@ -18,7 +18,10 @@ DenseOptFlow::DenseOptFlow()
     cvtColor(frame1, prvs, COLOR_BGR2GRAY);
     next_x = 0;
     next_y = 0;
-    
+    threshold = 1;
+    frame_counter = 0;
+    og_counter = 0;
+    hue_counter = 0;
     
 }
 
@@ -31,6 +34,7 @@ void DenseOptFlow::trackDenseFlow()
         if (break_flag == 1) {
             break;
         }
+        frame_counter += 1;
         //needs to be reset every time
         Mat next;
         capture.read(box_frame);
@@ -44,25 +48,123 @@ void DenseOptFlow::trackDenseFlow()
         // visualization
         
         //cout << "Flow:" << flow_point << endl;
+        print_flow = flow.at< Point2f>(frame2.rows / 2, frame2.cols / 2);
         get_flow += flow.at< Point2f>(frame2.rows / 2, frame2.cols / 2 );
+        /*next_x = frame2.cols / 2 + get_flow.x;
+        next_y = frame2.rows / 2 + get_flow.y;*/
         next_x = frame2.cols / 2 + get_flow.x;
         next_y = frame2.rows / 2 + get_flow.y;
         update_point = Point(next_x, next_y);
+        //cout << "update flow" << update_point << endl;
+        /*cout << "get flow" << get_flow << endl;
+        circle(frame2, update_point, 3, CV_RGB(0, 255, 0), -1);*/
+        
 
-        darwRectangle();
+        /*if (frame_counter == 4) {
+            
+            frame_counter = 0;
+            darwRectangle();
+            get_flow.x = 0;
+            get_flow.y = 0;
+            //circle(frame2, update_point, 3, CV_RGB(0, 255, 0), -1);
+        }*/
+
+        //averageFlow(flow);
+        /*drawAllPoints(flow);
+        if (draw_flag == 1) {
+            imwrite("C:\\Users\\spyro\\Desktop\\Ants\\OptFlow.png",frame2);
+            break;
+        }*/
+        //darwRectangle();
+        showHue(flow);
+        if (draw_flag == 1) {
+            break;
+        }
         
         //circle(frame2, update_point, 3, CV_RGB(255, 0, 0), -1);
+        freq = getTickFrequency() / ((double)getTickCount() - timer);
+        cout << "fps" << freq << endl;
+        //putText(frame, to_string(freq), Point(100, 80), FONT_HERSHEY_PLAIN, 1.5, Scalar(0, 0, 255), 2);
         imshow("frame2", frame2);
-        keyboard = waitKey(100);
+        keyboard = waitKey(1);
         if (keyboard == 'q' || keyboard == 27)
             break;
         prvs = next;
     }
 }
 
+
+void DenseOptFlow::averageFlow(Mat flow) {
+    sum_delta_x = 0;
+    sum_delta_y = 0;
+    x_counter = 0;
+    y_counter = 0;
+    total_counter = 0;
+        for (int y = (frame2.rows / 2 - 5); y < (frame2.rows / 2 + 5); y++) {
+            for (int x = (frame2.cols / 2 - 5); x < (frame2.cols / 2 + 5); x++) {
+                flow_point = flow.at< Point2f>(y, x);
+                /*if (abs(flow_point.y) < threshold) {
+                    flow_point.y = 0;
+                    y_counter += 1;
+                }
+                if (abs(flow_point.x) < threshold) {
+                    flow_point.x = 0;
+                    x_counter += 1;
+                }*/
+                total_counter += 1;
+                sum_delta_y += flow_point.y;
+                sum_delta_x += flow_point.x;
+            }
+            //sum_delta_y += flow_point.y;
+        }
+        //cout << "x:" << sum_delta_x <<  "y:" << sum_delta_y << endl;
+        //have a total x and y and if its 0 set whole thing to 0
+        /*int denum_x = (frame2.rows * frame2.cols - x_counter);
+        int denum_y = (frame2.rows * frame2.cols - y_counter);
+        if (denum_x == 0) {
+            denum_x = 1;
+        }
+        if (denum_y == 0) {
+            denum_y = 1;
+        }*/
+        /*cout << "x:" << sum_delta_x << endl;
+        cout << "y:" << sum_delta_y << endl;
+        cout << "total:" << total_counter << endl;*/
+        sum_delta_x = (sum_delta_x / (total_counter/4));
+        sum_delta_y = (sum_delta_y / (total_counter/4));
+        sum_delta_x += sum_delta_x;
+        sum_delta_y += sum_delta_y;
+        //rec_corner += Point(sum_delta_x, sum_delta_y);
+        //cout << rec_corner << endl;
+        //rec_corner = Point(sum_delta_x, sum_delta_y);
+        /*cout << "denumx:" << denum_x << endl;
+        cout << "denumy:" << denum_y << endl;*/
+
+        //cout << "sum" << rec_corner << endl;
+        if (frame_counter == 4) {
+            cout << "x:" << sum_delta_x << endl;
+            cout << "y:" << sum_delta_y << endl;
+            frame_counter = 0;
+            darwRectangle();
+            sum_delta_x = 0;
+            sum_delta_y = 0;
+        }
+
+}
+
 void DenseOptFlow::darwRectangle() {
-    rec_x =  box.x + get_flow.x;
-    rec_y = box.y + get_flow.y;
+    //cout << "box" << box.x << endl;
+    /*rec_x =  box.x + get_flow.x;
+    rec_y = box.y + get_flow.y;*/
+    rec_x = box.x + sum_delta_x;
+    rec_y = box.y + sum_delta_y;
+    /*rec_x = rec_corner.x + box.x;
+    rec_y = rec_corner.y + box.y;*/
+    //rec_y = box.y - 1;
+    /*rec_x = print_flow.x + box.x;
+    rec_y = print_flow.y + box.y;*/
+    /*rec_x = get_flow.x + box.x;
+    rec_y = get_flow.y + box.y;*/
     rec_width = box.width;
     rec_height = box.height;
     tracked_rect = Rect2d(rec_x, rec_y, rec_width, rec_height);
@@ -70,15 +172,33 @@ void DenseOptFlow::darwRectangle() {
 }
 
 void DenseOptFlow::drawAllPoints(Mat flow) {
-    step = 40;
-    for (int y = 0; y < frame2.rows; y += step)
-        for (int x = 0; x < frame2.rows; x += step) {
-            Point2f flow_point = flow.at< Point2f>(y, x);
-            circle(frame2, Point(y, x), 3, CV_RGB(0, 255, 0), -1);
-            line(frame2, Point(x, y), Point(flow_point.x + x, flow_point.y + y), CV_RGB(0, 255, 0));
-            delta_x += flow_point.x;
-            delta_y += flow_point.y;
+    step = 20;
+    for (int y = 0; y < frame2.rows; y += step) {
+        for (int x = 0; x < frame2.cols; x += step) {
+            draw_flow_point += flow.at< Point2f>(y, x);
+            /*delta_x += flow_point.x;
+            delta_y += flow_point.y;*/
+            if (frame_counter == 10) {
+                circle(frame2, Point(y, x), 3, CV_RGB(0, 255, 0), -1);
+                float_x = draw_flow_point.x /5;
+                float_x = draw_flow_point.y / 5;
+                if (abs(float_x) < 0.5) {
+                    approx_x = 0;
+                }
+                if (abs(float_y) < 0.5) {
+                    approx_y = 0;
+                }
+                line(frame2, Point(x, y), Point(approx_x + x, approx_y + y), CV_RGB(0, 255, 0));
+                draw_flag = 1;
+                //draw_flow_point.x = 0;
+                //draw_flow_point.y = 0;
+            }
+
+
+
         }
+    }
+    
 }
 
     void DenseOptFlow::showHue(Mat flow){
@@ -98,9 +218,15 @@ void DenseOptFlow::drawAllPoints(Mat flow) {
         /*circle(bgr, Point(y, x), 5, CV_RGB(0, 255, 0), -1);
         line(bgr, Point(x, y), Point(flow_point.x + x, flow_point.y + y), CV_RGB(0, 255, 0));*/
         cout << "Hue:" << test_point << endl;
-        freq = getTickFrequency() / ((double)getTickCount() - timer);
-        putText(bgr, to_string(freq), Point(100, 80), FONT_HERSHEY_PLAIN, 1.5, Scalar(0, 0, 255), 2);
-        imshow("bgr", bgr);
+       /* freq = getTickFrequency() / ((double)getTickCount() - timer);
+        putText(bgr, to_string(freq), Point(100, 80), FONT_HERSHEY_PLAIN, 1.5, Scalar(0, 0, 255), 2);*/
+        name_og = "C:\\Users\\spyro\\Desktop\\Ants\\Original" + to_string(og_counter) + ".png";
+        name_hue = format("C:\\Users\\spyro\\Desktop\\Ants\\Hue%04d.png", hue_counter++);
+        imwrite(name_og, frame2);
+        imwrite(name_hue, bgr);
+        og_counter += 1;
+        hue_counter += 1;
+        
     }
 
 
