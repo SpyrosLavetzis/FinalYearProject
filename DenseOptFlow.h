@@ -6,6 +6,7 @@
 #include <opencv2/imgproc.hpp>
 #include <opencv2/videoio.hpp>
 #include <opencv2/video.hpp>
+#include <cstdlib> 
 using namespace cv;
 using namespace std;
 
@@ -25,10 +26,25 @@ private:
 	int step;
 	Point update_point;
 	Point2f get_flow;
+	Point2f print_flow;
 	int next_x, next_y;
 	int delta_x, delta_y;
 	Rect2d tracked_rect;
 	int rec_x, rec_y, rec_width, rec_height;
+	float sum_delta_x, sum_delta_y;
+	float threshold;
+	int y_counter, x_counter, total_counter;
+	bool y_dismiss;
+	Point2f flow_point;
+	Point rec_corner;
+	int frame_counter;
+	Point2f draw_flow_point;
+	int draw_flag;
+	float float_x;
+	float float_y;
+	int approx_x, approx_y;
+	String name_og, name_hue;
+	int og_counter, hue_counter;
 
 public:
 	DenseOptFlow();
@@ -37,5 +53,6 @@ public:
 	void showHue(Mat flow);
 	void drawAllPoints(Mat flow);
 	void darwRectangle();
+	void averageFlow(Mat flow);
 
 };
