@@ -3,7 +3,7 @@
 
 DenseOptFlow::DenseOptFlow()
 {
-    capture.open("C:\\Users\\spyro\\Desktop\\Ants\\ZoomedFast.mp4");
+    capture.open("C:\\Users\\spyro\\Desktop\\Ants\\ZoomedSlow.mp4");
     break_flag = 0;
     //capture.open(0);
     if (!capture.isOpened()) {
@@ -18,7 +18,7 @@ DenseOptFlow::DenseOptFlow()
     cvtColor(frame1, prvs, COLOR_BGR2GRAY);
     next_x = 0;
     next_y = 0;
-    threshold = 1;
+    threshold = 0.5;
     frame_counter = 0;
     og_counter = 0;
     hue_counter = 0;
@@ -69,17 +69,19 @@ void DenseOptFlow::trackDenseFlow()
             //circle(frame2, update_point, 3, CV_RGB(0, 255, 0), -1);
         }*/
 
-        //averageFlow(flow);
+        averageFlowTotal(flow);
         /*drawAllPoints(flow);
         if (draw_flag == 1) {
             imwrite("C:\\Users\\spyro\\Desktop\\Ants\\OptFlow.png",frame2);
             break;
         }*/
         //darwRectangle();
-        showHue(flow);
-        if (draw_flag == 1) {
+        //showHue(flow);
+        //drawAllPoints(flow);
+        /*if (draw_flag == 1) {
+            cout << "HERE" << endl;
             break;
-        }
+        }*/
         
         //circle(frame2, update_point, 3, CV_RGB(255, 0, 0), -1);
         freq = getTickFrequency() / ((double)getTickCount() - timer);
@@ -93,6 +95,73 @@ void DenseOptFlow::trackDenseFlow()
     }
 }
 
+void DenseOptFlow::averageFlowTotal(Mat flow) {
+    sum_delta_x = 0;
+    sum_delta_y = 0;
+    x_counter = 0;
+    y_counter = 0;
+    total_counter = 0;
+    for (int y = 0; y < frame2.rows; y++) {
+        for (int x = 0; x < frame2.cols; x++) {
+            flow_point = flow.at< Point2f>(y, x);
+           // cout << "flow:" << flow_point << endl;
+            if (abs(flow_point.y) < threshold) {
+                flow_point.y = 0;
+                y_counter -= 1;
+            }
+            if (abs(flow_point.x) < threshold) {
+                flow_point.x = 0;
+                x_counter -= 1;
+            }
+            x_counter += 1;
+            y_counter += 1;
+            //total_counter += 1;
+            sum_delta_y += flow_point.y;
+            sum_delta_x += flow_point.x;
+        }
+        //sum_delta_y += flow_point.y;
+    }
+    /*cout << "x_counter:" << x_counter << endl;
+    if (y_counter == 0) {
+        y_counter = 1;
+    }
+    if (x_counter == 0) {
+        x_counter = 1;
+    }*/
+    //total_counter = total_counter - (y_counter + x_counter) / 2;
+    //cout << "total counter:" << total_counter << endl;
+    if (x_counter != 0 && y_counter != 0) {
+        sum_delta_x = CORRECTION_FACTOR*(sum_delta_x / (x_counter));
+        sum_delta_y = CORRECTION_FACTOR*(sum_delta_y / (y_counter));
+    }
+    else if (x_counter != 0) {
+        sum_delta_x = CORRECTION_FACTOR *(sum_delta_x / (x_counter ));
+        sum_delta_y = 0;
+    }
+    else if (y_counter != 0) {
+        sum_delta_y = CORRECTION_FACTOR *(sum_delta_y / (y_counter));
+        sum_delta_x = 0;
+    }
+    else {
+        sum_delta_x = 0;
+        sum_delta_y = 0;
+    }
+    
+    sum_delta_x += sum_delta_x;
+    sum_delta_y += sum_delta_y;
+
+
+    if (frame_counter == 4) {
+        cout << "x:" << sum_delta_x << endl;
+        cout << "y:" << sum_delta_y << endl;
+
+        frame_counter = 0;
+        darwRectangle();
+        sum_delta_x = 0;
+        sum_delta_y = 0;
+    }
+
+}
 
 void DenseOptFlow::averageFlow(Mat flow) {
     sum_delta_x = 0;
@@ -100,8 +169,8 @@ void DenseOptFlow::averageFlow(Mat flow) {
     x_counter = 0;
     y_counter = 0;
     total_counter = 0;
-        for (int y = (frame2.rows / 2 - 5); y < (frame2.rows / 2 + 5); y++) {
-            for (int x = (frame2.cols / 2 - 5); x < (frame2.cols / 2 + 5); x++) {
+        for (int y = (frame2.rows / 2 - 10); y < (frame2.rows / 2 + 10); y++) {
+            for (int x = (frame2.cols / 2 - 10); x < (frame2.cols / 2 + 10); x++) {
                 flow_point = flow.at< Point2f>(y, x);
                 /*if (abs(flow_point.y) < threshold) {
                     flow_point.y = 0;
@@ -178,21 +247,21 @@ void DenseOptFlow::drawAllPoints(Mat flow) {
             draw_flow_point += flow.at< Point2f>(y, x);
             /*delta_x += flow_point.x;
             delta_y += flow_point.y;*/
-            if (frame_counter == 10) {
+            //if (frame_counter == 2) {
                 circle(frame2, Point(y, x), 3, CV_RGB(0, 255, 0), -1);
-                float_x = draw_flow_point.x /5;
-                float_x = draw_flow_point.y / 5;
-                if (abs(float_x) < 0.5) {
-                    approx_x = 0;
+                float_x = draw_flow_point.x/4;
+                float_y = draw_flow_point.y/4;
+                /*if (abs(float_x) < 0.5) {
+                    float_x = 0;
                 }
                 if (abs(float_y) < 0.5) {
-                    approx_y = 0;
-                }
-                line(frame2, Point(x, y), Point(approx_x + x, approx_y + y), CV_RGB(0, 255, 0));
+                    float_y = 0;
+                }*/
+                line(frame2, Point(x, y), Point(float_x + x, float_y + y), CV_RGB(0, 255, 0));
                 draw_flag = 1;
                 //draw_flow_point.x = 0;
                 //draw_flow_point.y = 0;
-            }
+            //}
 
 
 
@@ -221,7 +290,7 @@ void DenseOptFlow::drawAllPoints(Mat flow) {
        /* freq = getTickFrequency() / ((double)getTickCount() - timer);
         putText(bgr, to_string(freq), Point(100, 80), FONT_HERSHEY_PLAIN, 1.5, Scalar(0, 0, 255), 2);*/
         name_og = "C:\\Users\\spyro\\Desktop\\Ants\\Original" + to_string(og_counter) + ".png";
-        name_hue = format("C:\\Users\\spyro\\Desktop\\Ants\\Hue%04d.png", hue_counter++);
+        name_hue = "C:\\Users\\spyro\\Desktop\\Ants\\Hue" + to_string(hue_counter) + ".png";
         imwrite(name_og, frame2);
         imwrite(name_hue, bgr);
         og_counter += 1;
