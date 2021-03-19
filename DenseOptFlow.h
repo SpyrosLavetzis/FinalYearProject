@@ -45,6 +45,7 @@ private:
 	int approx_x, approx_y;
 	String name_og, name_hue;
 	int og_counter, hue_counter;
+	const int CORRECTION_FACTOR = 4;
 
 public:
 	DenseOptFlow();
@@ -54,5 +55,5 @@ public:
 	void drawAllPoints(Mat flow);
 	void darwRectangle();
 	void averageFlow(Mat flow);
-
+	void averageFlowTotal(Mat flow);
 };
