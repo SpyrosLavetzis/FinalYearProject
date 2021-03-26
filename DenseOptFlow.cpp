@@ -3,7 +3,7 @@
 
 DenseOptFlow::DenseOptFlow()
 {
-    capture.open("C:\\Users\\spyro\\Desktop\\Ants\\ZoomedSlow.mp4");
+    capture.open("C:\\Users\\spyro\\Desktop\\Ants\\ZoomedFast.mp4");
     break_flag = 0;
     //capture.open(0);
     if (!capture.isOpened()) {
@@ -18,7 +18,7 @@ DenseOptFlow::DenseOptFlow()
     cvtColor(frame1, prvs, COLOR_BGR2GRAY);
     next_x = 0;
     next_y = 0;
-    threshold = 0.5;
+    threshold = 2;
     frame_counter = 0;
     og_counter = 0;
     hue_counter = 0;
