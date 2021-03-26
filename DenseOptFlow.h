@@ -45,7 +45,7 @@ private:
 	int approx_x, approx_y;
 	String name_og, name_hue;
 	int og_counter, hue_counter;
-	const int CORRECTION_FACTOR = 4;
+	const float CORRECTION_FACTOR = 2.8;
 
 public:
 	DenseOptFlow();
