@@ -144,8 +144,32 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="OCVTest.cpp" />
+    <ClCompile Include="BGSubtractor.cpp" />
+    <ClCompile Include="CamShiftV2.cpp" />
+    <ClCompile Include="CamShiftV3.cpp" />
+    <ClCompile Include="FeatureMatching.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="DenseOptFlow.cpp" />
+    <ClCompile Include="OpticalFlow.cpp" />
+    <ClCompile Include="ORBDescriptor.cpp" />
+    <ClCompile Include="PC2Arduino.cpp" />
+    <ClCompile Include="PCAdetect.cpp" />
+    <ClCompile Include="SerialPort.cpp" />
+    <ClCompile Include="CamShift.cpp" />
+    <ClCompile Include="SparseOptFlow.cpp" />
+    <ClCompile Include="TemplateMatching.cpp" />
     <ClCompile Include="Test.cpp" />
+    <ClCompile Include="TestCorner.cpp" />
+    <ClCompile Include="Tracking.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="DenseOptFlow.h" />
+    <ClInclude Include="PCAdetect.h" />
+    <ClInclude Include="SerialPort.h" />
+    <ClInclude Include="SparseOptFlow.h" />
+    <ClInclude Include="stats.h" />
+    <ClInclude Include="Tracking.h" />
+    <ClInclude Include="utils.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

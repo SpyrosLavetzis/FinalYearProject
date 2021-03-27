@@ -1,2 +1,43 @@
-﻿  OCVTest.cpp
+﻿  DenseOptFlow.cpp
+C:\Users\spyro\Documents\IndividualProject\IndividualProject\DenseOptFlow.h(48,32): warning C4305: 'initializing': truncation from 'double' to 'const float'
+C:\Users\spyro\Documents\IndividualProject\IndividualProject\DenseOptFlow.cpp(55,34): warning C4244: '=': conversion from '_Tp' to 'int', possible loss of data
+          with
+          [
+              _Tp=float
+          ]
+C:\Users\spyro\Documents\IndividualProject\IndividualProject\DenseOptFlow.cpp(56,34): warning C4244: '=': conversion from '_Tp' to 'int', possible loss of data
+          with
+          [
+              _Tp=float
+          ]
+C:\Users\spyro\Documents\IndividualProject\IndividualProject\DenseOptFlow.cpp(228,19): warning C4244: '=': conversion from '_Tp' to 'int', possible loss of data
+          with
+          [
+              _Tp=double
+          ]
+C:\Users\spyro\Documents\IndividualProject\IndividualProject\DenseOptFlow.cpp(229,19): warning C4244: '=': conversion from '_Tp' to 'int', possible loss of data
+          with
+          [
+              _Tp=double
+          ]
+C:\Users\spyro\Documents\IndividualProject\IndividualProject\DenseOptFlow.cpp(237,20): warning C4244: '=': conversion from '_Tp' to 'int', possible loss of data
+          with
+          [
+              _Tp=double
+          ]
+C:\Users\spyro\Documents\IndividualProject\IndividualProject\DenseOptFlow.cpp(238,21): warning C4244: '=': conversion from '_Tp' to 'int', possible loss of data
+          with
+          [
+              _Tp=double
+          ]
+C:\Users\spyro\Documents\IndividualProject\IndividualProject\DenseOptFlow.cpp(260,70): warning C4244: 'argument': conversion from 'float' to '_Tp', possible loss of data
+          with
+          [
+              _Tp=int
+          ]
+C:\Users\spyro\Documents\IndividualProject\IndividualProject\DenseOptFlow.cpp(260,57): warning C4244: 'argument': conversion from 'float' to '_Tp', possible loss of data
+          with
+          [
+              _Tp=int
+          ]
   IndividualProject.vcxproj -> C:\Users\spyro\Documents\IndividualProject\x64\Debug\IndividualProject.exe
