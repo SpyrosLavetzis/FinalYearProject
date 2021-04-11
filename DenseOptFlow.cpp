@@ -19,10 +19,12 @@ DenseOptFlow::DenseOptFlow()
     next_x = 0;
     next_y = 0;
     threshold = 2;
+
     frame_counter = 0;
     og_counter = 0;
     hue_counter = 0;
-    
+    correction_factor_x = 3;
+    correction_factor_y = 3;
 }
 
 void DenseOptFlow::trackDenseFlow()
@@ -44,7 +46,7 @@ void DenseOptFlow::trackDenseFlow()
             break;
         cvtColor(frame2, next, COLOR_BGR2GRAY);
         Mat flow(prvs.size(), CV_32FC2);
-        calcOpticalFlowFarneback(prvs, next, flow, 0.5, 3, 15, 3, 5, 1.2, 0);
+        calcOpticalFlowFarneback(prvs, next, flow, 0.5, 5, 20, 5, 7, 1.5, 0);
         // visualization
         
         //cout << "Flow:" << flow_point << endl;
@@ -130,16 +132,33 @@ void DenseOptFlow::averageFlowTotal(Mat flow) {
     }*/
     //total_counter = total_counter - (y_counter + x_counter) / 2;
     //cout << "total counter:" << total_counter << endl;
+   /* dt  = getTickFrequency() / ((double)getTickCount() - timer);
+    velocity = dt * sum_delta_y;
+    cout << "velocity" << velocity << endl;*/
+    /*cout << "sum_x=" << sum_delta_x << endl;
+    cout << "sum_y=" << sum_delta_y << endl;*/
+    /*if (sum_delta_x > 1000) {
+        correction_factor_x = 3;
+    }
+    else {
+        correction_factor_x = 2;
+    }
+    if (sum_delta_y > 1000) {
+        correction_factor_y = 3;
+    }
+    else {
+        correction_factor_y = 2;
+    }*/
     if (x_counter != 0 && y_counter != 0) {
-        sum_delta_x = CORRECTION_FACTOR*(sum_delta_x / (x_counter));
-        sum_delta_y = CORRECTION_FACTOR*(sum_delta_y / (y_counter));
+        sum_delta_x = correction_factor_x*(sum_delta_x / (x_counter));
+        sum_delta_y = correction_factor_y*(sum_delta_y / (y_counter));
     }
     else if (x_counter != 0) {
-        sum_delta_x = CORRECTION_FACTOR *(sum_delta_x / (x_counter ));
+        sum_delta_x = correction_factor_x *(sum_delta_x / (x_counter ));
         sum_delta_y = 0;
     }
     else if (y_counter != 0) {
-        sum_delta_y = CORRECTION_FACTOR *(sum_delta_y / (y_counter));
+        sum_delta_y = correction_factor_y *(sum_delta_y / (y_counter));
         sum_delta_x = 0;
     }
     else {
@@ -154,7 +173,18 @@ void DenseOptFlow::averageFlowTotal(Mat flow) {
     if (frame_counter == 4) {
         cout << "x:" << sum_delta_x << endl;
         cout << "y:" << sum_delta_y << endl;
-
+        if (abs(sum_delta_x) > 10) {
+            correction_factor_x = 3;
+        }
+        else {
+            correction_factor_x = 2;
+        }
+        if (abs(sum_delta_y) > 10) {
+            correction_factor_y = 3;
+        }
+        else {
+            correction_factor_y = 2;
+        }
         frame_counter = 0;
         darwRectangle();
         sum_delta_x = 0;
