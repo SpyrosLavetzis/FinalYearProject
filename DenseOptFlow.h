@@ -45,8 +45,10 @@ private:
 	int approx_x, approx_y;
 	String name_og, name_hue;
 	int og_counter, hue_counter;
-	const float CORRECTION_FACTOR = 2.8;
-
+	int correction_factor_x;
+	int correction_factor_y;
+	float dt;
+	float velocity;
 public:
 	DenseOptFlow();
 	void trackDenseFlow();
