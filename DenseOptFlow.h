@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iostream>
+#include <fstream>
 #include <opencv2/core.hpp>
 #include <opencv2/highgui.hpp>
 #include <opencv2/imgproc.hpp>
@@ -9,6 +10,8 @@
 #include <cstdlib> 
 using namespace cv;
 using namespace std;
+
+float compareRect(Rect2d rect1, Rect2d rect2);
 
 class DenseOptFlow {
 private:
@@ -31,7 +34,7 @@ private:
 	int delta_x, delta_y;
 	Rect2d tracked_rect;
 	int rec_x, rec_y, rec_width, rec_height;
-	float sum_delta_x, sum_delta_y;
+	float sum_delta_x_t, sum_delta_y_t;
 	float threshold;
 	int y_counter, x_counter, total_counter;
 	bool y_dismiss;
@@ -43,12 +46,15 @@ private:
 	float float_x;
 	float float_y;
 	int approx_x, approx_y;
-	String name_og, name_hue;
+	String name_og, name_hue, name_sparse;
 	int og_counter, hue_counter;
-	int correction_factor_x;
-	int correction_factor_y;
+	float correction_factor_x;
+	float correction_factor_y;
 	float dt;
 	float velocity;
+	int save_counter, sparse_counter;
+
+
 public:
 	DenseOptFlow();
 	void trackDenseFlow();
@@ -58,4 +64,5 @@ public:
 	void darwRectangle();
 	void averageFlow(Mat flow);
 	void averageFlowTotal(Mat flow);
+	void saveToFile();
 };
