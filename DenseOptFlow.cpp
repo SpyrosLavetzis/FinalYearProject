@@ -24,7 +24,7 @@ DenseOptFlow::DenseOptFlow()
     cvtColor(frame1, prvs, COLOR_BGR2GRAY);
     next_x = 0;
     next_y = 0;
-    threshold = 2.6;
+    threshold = 1.5;
     save_counter = 0;
     sparse_counter = 0;
     frame_counter = 0;
@@ -45,14 +45,15 @@ void DenseOptFlow::trackDenseFlow()
         if (break_flag == 1) {
             break;
         }
-        frame_counter += 1;
+        //frame_counter += 1;
         //needs to be reset every time
         Mat next;
         capture.read(box_frame);
         timer = (double)getTickCount();
-        box_frame(box).copyTo(frame2);
-        if (frame2.empty())
+        if (box_frame.empty())
             break;
+        box_frame(box).copyTo(frame2);
+        
         cvtColor(frame2, next, COLOR_BGR2GRAY);
         Mat flow(prvs.size(), CV_32FC2);
         calcOpticalFlowFarneback(prvs, next, flow, 0.5, 5, 20, 5, 7, 1.5, 0);
@@ -106,7 +107,7 @@ void DenseOptFlow::trackDenseFlow()
         }*/
         
         //circle(frame2, update_point, 3, CV_RGB(255, 0, 0), -1);
-        //saveToFile();
+        saveToFile();
         /*if (save_counter == 10) {
             showHue(flow);
             save_counter = 0;
@@ -126,17 +127,19 @@ void DenseOptFlow::trackDenseFlow()
         if (keyboard == 27)
             break;
         prvs = next;
+        
     }
     metric_counter = metric_counter - 4;
     metric = metric / metric_counter;
     //cout << "metric_counter: " << metric_counter << endl;
-    cout << "metric: " << metric << endl;
+    cout << "metric: " << (int)(metric*100) << "%" << endl;
+    
 }
 
 void DenseOptFlow::saveToFile() {
-    rectangle(box_frame, box, Scalar(255, 0, 0), 2, 8);
+    //rectangle(box_frame, box, Scalar(255, 0, 0), 2, 8);
     if (save_counter == 10) {
-        name_sparse = "C:\\Users\\spyro\\Desktop\\Ants\\SlowCompare\\Dense" + to_string(sparse_counter) + ".png";
+        name_sparse = "C:\\Users\\spyro\\Desktop\\Ants\\SlowCompare\\DenseMetric" + to_string(sparse_counter) + ".png";
         imwrite(name_sparse, box_frame);
         sparse_counter += 1;
         save_counter = 0;
@@ -148,7 +151,7 @@ void DenseOptFlow::averageFlowTotal(Mat flow) {
     float sum_delta_y = 0;
     x_counter = 0;
     y_counter = 0;
-    total_counter = 0;
+    cout << "farme counter: " << frame_counter << endl;
     for (int y = 0; y < frame2.rows; y++) {
         for (int x = 0; x < frame2.cols; x++) {
             flow_point = flow.at< Point2f>(y, x);
@@ -197,15 +200,12 @@ void DenseOptFlow::averageFlowTotal(Mat flow) {
     else {
         correction_factor_y = 2;
     }*/
-    //cout << "counter: " << y_counter << endl;
-    if (x_counter < 300) {
+    /*if (x_counter < 100) {
         x_counter = 0;
-    }
-        
-
-    if (y_counter < 300) {
+    }    
+    if (y_counter < 100) {
         y_counter = 0;
-    }
+    }*/
         
     if (x_counter != 0 && y_counter != 0) {
         sum_delta_x = correction_factor_x*(sum_delta_x / x_counter);
@@ -223,35 +223,39 @@ void DenseOptFlow::averageFlowTotal(Mat flow) {
         sum_delta_x = 0;
         sum_delta_y = 0;
     }
-    
+
     sum_delta_x_t += sum_delta_x;
     sum_delta_y_t += sum_delta_y;
     if (frame_counter == 0) {
         sum_delta_x_t = 0;
         sum_delta_y_t = 0;
+        cout << "Please work" << endl;
     }
-
-    if (frame_counter == 5) {
-        cout << "x:" << sum_delta_x << endl;
-        cout << "y:" << sum_delta_y << endl;
-        if (abs(sum_delta_x_t) > 5.5 /*& abs(sum_delta_x) < 15*/) {
-            correction_factor_x = 2;
+    cout << "sum x: " << sum_delta_x << endl;
+    cout << "sum y: " << sum_delta_y << endl;
+    frame_counter += 1;
+    if (frame_counter == 4) {
+        cout << "At 4" << endl;
+        cout << "x:" << sum_delta_x_t << endl;
+        cout << "y:" << sum_delta_y_t << endl;
+        if (abs(sum_delta_x_t) > 2 /*& abs(sum_delta_x) < 15*/) {
+            correction_factor_x = 1.7;
         }
         else {
-            correction_factor_x = 1.8;
+            correction_factor_x = 1.7;
         }
-        if (abs(sum_delta_y_t) > 5.5 /*& abs(sum_delta_y) < 15*/) {
-            correction_factor_y = 2;
+        if (abs(sum_delta_y_t) > 2 /*& abs(sum_delta_y) < 15*/) {
+            correction_factor_y = 1.7;
         }
         else {
-            correction_factor_y = 1.8;
+            correction_factor_y = 1.7;
         }
         frame_counter = 0;
         darwRectangle();
         sum_delta_x_t = 0;
         sum_delta_y_t = 0;
     }
-
+    
 }
 
 #if 0
