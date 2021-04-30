@@ -30,8 +30,6 @@ private:
 	Point update_point;
 	Point2f get_flow;
 	Point2f print_flow;
-	int next_x, next_y;
-	int delta_x, delta_y;
 	Rect2d tracked_rect;
 	int rec_x, rec_y, rec_width, rec_height;
 	float sum_delta_x_t, sum_delta_y_t;
@@ -43,8 +41,7 @@ private:
 	int frame_counter;
 	Point2f draw_flow_point;
 	int draw_flag;
-	float float_x;
-	float float_y;
+	float float_x, float_y;
 	int approx_x, approx_y;
 	String name_og, name_hue, name_sparse;
 	int og_counter, hue_counter;
@@ -66,3 +63,4 @@ public:
 	void averageFlowTotal(Mat flow);
 	void saveToFile();
 };
+
