@@ -1,4 +1,5 @@
 //Tracking API
+//Code taken from https://learnopencv.com/object-tracking-using-opencv-cpp-python/ and modified by Spyros lavetzis to get appropriate metrics
 
 #include <opencv2/opencv.hpp>
 #include <opencv2/tracking.hpp>
