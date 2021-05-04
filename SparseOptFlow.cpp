@@ -1,3 +1,5 @@
+//Original code from https://docs.opencv.org/3.4/d4/dee/tutorial_optical_flow.html. Modified to select points manually
+
 #ifndef RUN_GT
 
 #include "SparseOptFlow.h"
