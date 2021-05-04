@@ -1,3 +1,5 @@
+//Code modified and developed by Spyros Lavetzis. Original code of OpenCV can be found in: https://docs.opencv.org/3.4/d4/dee/tutorial_optical_flow.html
+
 #ifndef RUN_GT
 #include"DenseOptFlow.h"
 
