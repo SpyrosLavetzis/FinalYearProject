@@ -1,3 +1,5 @@
+//Test code. Not to run
+
 #ifdef TEST
 #include"DenseOptFlow.h"
 
